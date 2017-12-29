@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.service.KafkaService;
 import com.example.demo.service.TestService;
 import com.example.demo.service.impl.RedisServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,14 @@ public class GreetingController {
 
     @Autowired
     private RedisServiceImpl redisService;
+
     @Autowired
     private TestService testService;
-    @Autowired
-    private KafkaTemplate<Integer, String> kafkaTemplate;
 
-    @RequestMapping("/greeting")
+    @Autowired
+    private KafkaService kafkaService;
+
+    @RequestMapping("/redis")
     public String hello() {
         Map<String, String> map = redisService.sayHello();
         return map.toString();
@@ -35,7 +38,7 @@ public class GreetingController {
 
     @RequestMapping("/kafka")
     public void sendKafka() {
-        kafkaTemplate.send("1","hello,thanku,thanku very much");
+        kafkaService.sayThanks();
     }
 
 }
