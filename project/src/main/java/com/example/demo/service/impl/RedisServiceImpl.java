@@ -1,9 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.service.RedisService;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Service;
