@@ -1,5 +1,6 @@
 package com.example.demo.config;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.Scheduled;
 
@@ -12,7 +13,8 @@ import java.util.concurrent.*;
 public class ScheduleConfiguration {
     private boolean flag;
 
-    @Scheduled(initialDelay = 1000, fixedDelay = 1000)
+    @Scheduled(initialDelayString = "${spring.schedule.initialDelay:1000}",
+            fixedDelayString = "${spring.schedule.fixedDelay:60000}")
     public void run() throws ExecutionException, InterruptedException {
         Callable<String> callableTask = () -> {
             TimeUnit.MILLISECONDS.sleep(3000);
