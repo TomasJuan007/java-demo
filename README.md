@@ -5,12 +5,14 @@ redis
 
 kafka
 
-profile
+spring profile
 
-h2
+h2 database
 
-aspect
+log aspect
 
-consumer
+producer consumer
+
+integration test
 ## others
 akka-streams
