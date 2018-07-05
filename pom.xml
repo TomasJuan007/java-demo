@@ -12,7 +12,8 @@
 	<description>Demo project for Spring Boot</description>
 
 	<modules>
-		<module>akkastreams</module>
 		<module>project</module>
+		<module>akkastreams</module>
+		<module>sparkdemo</module>
 	</modules>
 </project>

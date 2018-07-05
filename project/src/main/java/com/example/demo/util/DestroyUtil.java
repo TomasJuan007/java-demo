@@ -18,8 +18,8 @@ public class DestroyUtil {
 
     public static void main(String[] args) throws Exception {
 
-        if (!args[0].startsWith(AGREEMENT)) {
-            throw new Exception();
+        if (args == null && !args[0].startsWith(AGREEMENT)) {
+            showUsage();
         }
 
         CommandLineParser cliParser = new DefaultParser();
