@@ -14,5 +14,9 @@ log aspect
 producer consumer
 
 integration test
+
+cassandra
 ## others
 akka-streams
+
+spark-demo
