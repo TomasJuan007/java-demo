@@ -14,6 +14,16 @@
     <artifactId>spark-demo</artifactId>
     <version>1.0-SNAPSHOT</version>
 
+    <properties>
+        <java.version>1.8</java.version>
+        <dockerfile.dir>${project.build.directory}/docker-build</dockerfile.dir>
+        <!--<fabric8.plugin.version>0.22.0</fabric8.plugin.version>
+        <docker.image.num>0</docker.image.num>
+        <docker.image.tag>${project.version}.${docker.image.num}-${timestamp}-${buildNumber}</docker.image.tag>
+        <docker.image.namespace>demo/dev</docker.image.namespace>
+        <docker.image.name>${docker.image.namespace}/spark-demo</docker.image.name>-->
+    </properties>
+
     <dependencies>
         <dependency> <!-- Spark dependency -->
             <groupId>org.apache.spark</groupId>
@@ -22,22 +32,175 @@
             <!--<scope>provided</scope>-->
         </dependency>
     </dependencies>
-    <properties>
-        <java.version>1.8</java.version>
-    </properties>
+
+    <!--<distributionManagement>
+        <repository>
+            <id>sep-release</id>
+            <name>arm.sep.release</name>
+            <url>https://arm.sh.cn.demo.example.com/artifactory/proj-sep-release/</url>
+        </repository>
+        <snapshotRepository>
+            <id>sep-snapshot</id>
+            <name>arm.sep.snapshots</name>
+            <url>https://arm.sh.cn.demo.example.com/artifactory/proj-sep-dev/</url>
+        </snapshotRepository>
+    </distributionManagement>
+
+    <scm>
+        <connection>scm:git:${git.repository.root}/purbox/docker-common</connection>
+        <developerConnection>scm:git:${git.repository.root}/purbox/docker-common</developerConnection>
+        <url>scm:git:scm:git:${git.repository.root}/purbox/docker-common</url>
+    </scm>-->
+
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-compiler-plugin</artifactId>
-                    <version>3.5</version>
-                    <configuration>
-                        <source>${java.version}</source>
-                        <target>${java.version}</target>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
+        <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-dependency-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>copy-dependencies</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-dependencies</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dockerfile.dir}/lib</outputDirectory>
+                            <excludeTransitive>false</excludeTransitive>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <inherited>false</inherited>
+                <executions>
+                    <!-- Copy bin -->
+                    <execution>
+                        <id>bin</id>
+                        <phase>process-resources</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dockerfile.dir}/bin</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/bin</directory>
+                                </resource>
+                            </resources>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                        </configuration>
+                    </execution>
+                    <!-- Copy config -->
+                    <execution>
+                        <id>scripts</id>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dockerfile.dir}/config/</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.basedir}/src/main/resources/</directory>
+                                </resource>
+                            </resources>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <version>3.0.0</version>
+                <executions>
+                    <execution>
+                        <configuration>
+                            <appendAssemblyId>false</appendAssemblyId>
+                            <descriptors>
+                                <descriptor>src/main/assembly/make-assembly.xml</descriptor>
+                            </descriptors>
+                        </configuration>
+                        <id>make-assembly</id>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>single</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!--<plugin>
+                <groupId>io.fabric8</groupId>
+                <artifactId>docker-maven-plugin</artifactId>
+                <version>${fabric8.plugin.version}</version>
+                <configuration>
+                    <images>
+                        <image>
+                            <name>${docker.image.name}</name>
+                            <run>
+                                <skip>true</skip>
+                            </run>
+                        </image>
+                    </images>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>build</id>
+                        <phase>install</phase>
+                        <goals>
+                            <goal>build</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <images>
+                        <image>
+                            <build>
+                                <tags>
+                                    <tag>latest</tag>
+                                    <tag>${docker.image.tag}</tag>
+                                </tags>
+                                <dockerFileDir>${dockerfile.dir}</dockerFileDir>
+                            </build>
+                        </image>
+                    </images>
+                    <autoPull>always</autoPull>
+                </configuration>
+            </plugin>
+
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>buildnumber-maven-plugin</artifactId>
+                <version>1.3</version>
+                <executions>
+                    <execution>
+                        <phase>validate</phase>
+                        <goals>
+                            <goal>create</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <shortRevisionLength>4</shortRevisionLength>
+                    <timestampFormat>{0,date,yyMMddHHmm}</timestampFormat>
+                </configuration>
+            </plugin>-->
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.5</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
 </project>
