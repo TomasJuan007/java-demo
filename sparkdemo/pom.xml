@@ -58,6 +58,7 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-dependency-plugin</artifactId>
                 <executions>
+                    <!-- Copy lib -->
                     <execution>
                         <id>copy-dependencies</id>
                         <phase>process-resources</phase>
@@ -94,9 +95,27 @@
                             <includeEmptyDirs>true</includeEmptyDirs>
                         </configuration>
                     </execution>
+                    <!-- Copy lib -->
+                    <execution>
+                        <id>jar</id>
+                        <phase>verify</phase>
+                        <goals>
+                            <goal>copy-resources</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>${dockerfile.dir}/lib</outputDirectory>
+                            <resources>
+                                <resource>
+                                    <directory>${project.build.directory}</directory>
+                                    <include>${project.artifactId}-${project.version}.jar</include>
+                                </resource>
+                            </resources>
+                            <includeEmptyDirs>true</includeEmptyDirs>
+                        </configuration>
+                    </execution>
                     <!-- Copy config -->
                     <execution>
-                        <id>scripts</id>
+                        <id>config</id>
                         <phase>validate</phase>
                         <goals>
                             <goal>copy-resources</goal>
