@@ -5,19 +5,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.ResourceLoader;
 
-import java.io.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.*;
 
 public class TfIdfServiceImpl {
     private static final Logger logger = LoggerFactory.getLogger(TfIdfServiceImpl.class);
 
     private static final int numLine = 5;
-    private static final int[] a = {1, 2, 3, 4, 5};
-    private static final int totalClassNum = 5;
 
     private static ResourceLoader resourceLoader = new DefaultResourceLoader();
     private static final String sampleFilePath = "data/sample.txt";
-    private static final String originalDataFilePath = "data/originalData.txt";
+    private static final String originalDataFilePath = "data/original";
 
     public static void main(String[] args) throws IOException {
         File sampleFile = resourceLoader.getResource(sampleFilePath).getFile();
@@ -55,38 +56,51 @@ public class TfIdfServiceImpl {
         logger.info("TF map {}", tfMap.toString());
 
         //calculate idf
-        HashMap<String, Double> idfMap = new HashMap<>();
-        for (String key : wordMap.keySet()) {
-            int otherClassNum = 1;
-            for (int m = 0; m < totalClassNum - 1; m++) {
-                int beginning = a[m];
-                int ending = a[m + 1];
+        int totalClassNum = 1;
+        HashMap<String, Integer> wordCountMap = new HashMap<>();
+        Set<String> keySet = wordMap.keySet();
+        for (String key : keySet) {
+            wordCountMap.put(key, 1);
+        }
 
-                File originalDataFile = resourceLoader.getResource(originalDataFilePath).getFile();
-                InputStreamReader dataReader = new InputStreamReader(
-                        new FileInputStream(originalDataFile), "utf-8");
-                BufferedReader sr = new BufferedReader(dataReader);
-                String txt = sr.readLine();
-                int next = 1;
-                while (txt != null) {
-                    if (next > beginning - 1 && next < ending) {
-                        String[] str2Array = txt.split(" ");
-                        int l;
-                        for (l = 0; l < str2Array.length; l++) {
-                            if (str2Array[l].equals(key)) {
-                                otherClassNum++;
+        HashMap<String, Double> idfMap = new HashMap<>();
+        File originalDataDirectory = resourceLoader.getResource(originalDataFilePath).getFile();
+        if (originalDataDirectory.isDirectory()) {
+            File[] originalDataFiles = originalDataDirectory.listFiles();
+            assert originalDataFiles != null;
+            totalClassNum = originalDataFiles.length;
+            for (File originalDataFile : originalDataFiles) {
+                boolean flag = true;
+                BufferedReader reader = null;
+
+                try {
+                    reader = new BufferedReader(new FileReader(originalDataFile));
+
+                    String line;
+                    while (flag && (line = reader.readLine()) != null) {
+                        for (String key : keySet) {
+                            if (line.toLowerCase().contains(key.toLowerCase())) {
+                                wordCountMap.put(key, wordCountMap.get(key)+1);
+                                flag = false;
                                 break;
                             }
                         }
-                        if (l < str2Array.length) {
-                            break;
-                        }
                     }
-                    txt = sr.readLine();
-                    next++;
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        assert reader != null;
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
             }
-            idfMap.put(key, Math.log10(1.0 * (totalClassNum - 1) / otherClassNum));
+        }
+        for (String key : keySet) {
+            idfMap.put(key, Math.log10(1.0 * (totalClassNum) / wordCountMap.get(key)));
         }
 
         logger.info("IDF map {}", idfMap.toString());
