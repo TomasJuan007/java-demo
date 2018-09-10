@@ -17,8 +17,8 @@ public class CassandraConfiguaration extends AbstractCassandraConfiguration {
     @Bean
     public CassandraClusterFactoryBean cluster() {
         CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();
-        cluster.setContactPoints("127.0.0.1");
-        cluster.setPort(9142);
+        cluster.setContactPoints("10.175.172.251");
+        cluster.setPort(9042);
         return cluster;
     }
 
