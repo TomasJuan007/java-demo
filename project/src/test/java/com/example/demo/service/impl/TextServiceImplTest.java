@@ -4,7 +4,7 @@ import com.example.demo.service.TextService;
 
 import java.io.IOException;
 
-public class TfIdfServiceImpl {
+public class TextServiceImplTest {
 
     private static final String sampleFilePath = "data/sample.txt";
     private static final String originalDataFilePath = "data/original";
