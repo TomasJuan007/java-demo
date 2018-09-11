@@ -14,7 +14,8 @@ import java.util.*;
 public class TfIdfServiceImpl {
     private static final Logger logger = LoggerFactory.getLogger(TfIdfServiceImpl.class);
 
-    private static final int numLine = 5;
+    private static int totalCount = 0;
+    private static Set<String> keySet;
 
     private static ResourceLoader resourceLoader = new DefaultResourceLoader();
     private static final String sampleFilePath = "data/sample.txt";
@@ -22,90 +23,26 @@ public class TfIdfServiceImpl {
 
     public static void main(String[] args) throws IOException {
         File sampleFile = resourceLoader.getResource(sampleFilePath).getFile();
-        Scanner sc = new Scanner(sampleFile);
-        tfIdf(sc);
+        tfIdf(sampleFile);
     }
 
-    private static void tfIdf(Scanner inputData) throws IOException {
+    private static void tfIdf(File sampleFile) throws IOException {
         //get word map
-        HashMap<String, Integer> wordMap = new HashMap<>();
-        int totalCount = 0;
-        for (int i = 0; i < TfIdfServiceImpl.numLine; i++) {
-            String str = inputData.nextLine();
-            String[] strArray = str.split(" ");
-            totalCount += strArray.length;
-            for (String aStrArray : strArray) {
-                if (!wordMap.containsKey(aStrArray)) {
-                    wordMap.put(aStrArray, 1);
-                } else {
-                    int v = wordMap.get(aStrArray);
-                    wordMap.put(aStrArray, v + 1);
-                }
-            }
-        }
-
-        logger.info("TF map {}", wordMap.toString());
+        HashMap<String, Integer> wordMap = getWordMap(sampleFile);
+        keySet = wordMap.keySet();
 
         //calculate tf
-        HashMap<String, Double> tfMap = new HashMap<>();
-        for (String key : wordMap.keySet()) {
-            int v = wordMap.get(key);
-            tfMap.put(key, 1.0 * v / totalCount);
-        }
-
-        logger.info("TF map {}", tfMap.toString());
+        HashMap<String, Double> tfMap = getTfMap(wordMap, totalCount);
 
         //calculate idf
-        int totalClassNum = 1;
-        HashMap<String, Integer> wordCountMap = new HashMap<>();
-        Set<String> keySet = wordMap.keySet();
-        for (String key : keySet) {
-            wordCountMap.put(key, 1);
-        }
-
-        HashMap<String, Double> idfMap = new HashMap<>();
-        File originalDataDirectory = resourceLoader.getResource(originalDataFilePath).getFile();
-        if (originalDataDirectory.isDirectory()) {
-            File[] originalDataFiles = originalDataDirectory.listFiles();
-            assert originalDataFiles != null;
-            totalClassNum = originalDataFiles.length;
-            for (File originalDataFile : originalDataFiles) {
-                boolean flag = true;
-                BufferedReader reader = null;
-
-                try {
-                    reader = new BufferedReader(new FileReader(originalDataFile));
-
-                    String line;
-                    while (flag && (line = reader.readLine()) != null) {
-                        for (String key : keySet) {
-                            if (line.toLowerCase().contains(key.toLowerCase())) {
-                                wordCountMap.put(key, wordCountMap.get(key)+1);
-                                flag = false;
-                                break;
-                            }
-                        }
-                    }
-
-                } catch (IOException e) {
-                    e.printStackTrace();
-                } finally {
-                    try {
-                        assert reader != null;
-                        reader.close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            }
-        }
-        for (String key : keySet) {
-            idfMap.put(key, Math.log10(1.0 * (totalClassNum) / wordCountMap.get(key)));
-        }
-
-        logger.info("IDF map {}", idfMap.toString());
+        HashMap<String, Double> idfMap = getIdfMap(originalDataFilePath);
 
         //calculate tf-idf and sort
+        HashMap<String, Double> tfIdfMap = getTfIdfMap(tfMap, idfMap);
+        logger.info("TF*IDF map {}", tfIdfMap.toString());
+    }
+
+    private static HashMap<String,Double> getTfIdfMap(HashMap<String,Double> tfMap, HashMap<String,Double> idfMap) {
         HashMap<String, Double> tfIdfMap = new HashMap<>();
         Iterator it2 = tfMap.keySet().iterator();
         Iterator it3 = idfMap.keySet().iterator();
@@ -142,5 +79,101 @@ public class TfIdfServiceImpl {
             }
             System.out.println(fea);
         }
+        return tfIdfMap;
+    }
+
+    private static HashMap<String,Double> getIdfMap(String originalDataFilePath) throws IOException {
+        int totalClassNum = 1;
+        HashMap<String, Integer> wordCountMap = new HashMap<>();
+
+        for (String key : keySet) {
+            wordCountMap.put(key, 1);
+        }
+
+        HashMap<String, Double> idfMap = new HashMap<>();
+        File originalDataDirectory = resourceLoader.getResource(originalDataFilePath).getFile();
+        if (originalDataDirectory.isDirectory()) {
+            File[] originalDataFiles = originalDataDirectory.listFiles();
+            assert originalDataFiles != null;
+            totalClassNum = originalDataFiles.length;
+            for (File originalDataFile : originalDataFiles) {
+
+                BufferedReader reader = null;
+
+                try {
+                    reader = new BufferedReader(new FileReader(originalDataFile));
+
+                    String line;
+                    while ((line = reader.readLine()) != null) {
+                        for (String key : keySet) {
+                            boolean flag = false;
+                            if (line.toLowerCase().contains(key.toLowerCase())) {
+                                flag = true;
+                            }
+                            if (flag) {
+                                wordCountMap.put(key, wordCountMap.get(key) + 1);
+                            }
+                        }
+                    }
+
+                } catch (IOException e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        assert reader != null;
+                        reader.close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        }
+        for (String key : keySet) {
+            idfMap.put(key, Math.log10(1.0 * (totalClassNum) / wordCountMap.get(key)));
+        }
+
+        logger.info("IDF map {}", idfMap.toString());
+        return idfMap;
+    }
+
+    private static HashMap<String,Double> getTfMap(HashMap<String,Integer> wordMap, int totalCount) {
+        HashMap<String, Double> tfMap = new HashMap<>();
+        for (String key : keySet) {
+            int v = wordMap.get(key);
+            tfMap.put(key, 1.0 * v / totalCount);
+        }
+
+        logger.info("TF map {}", tfMap.toString());
+        return tfMap;
+    }
+
+    private static HashMap<String, Integer> getWordMap(File sampleFile) throws IOException {
+        //get word map
+        HashMap<String, Integer> wordMap = new HashMap<>();
+
+        BufferedReader br;
+        br = new BufferedReader(new FileReader(sampleFile));
+        String inputLine;
+        while ((inputLine = br.readLine()) != null) {
+            String[] strArray = inputLine.split(" ");
+            for (int i=0; i<strArray.length; i++) {
+                strArray[i] = strArray[i].toLowerCase();
+                if (strArray[i].endsWith(",") || strArray[i].endsWith(".")) {
+                    strArray[i] = strArray[i].substring(0, strArray[i].length()-1);
+                }
+            }
+            totalCount += strArray.length;
+            for (String aStrArray : strArray) {
+                if (!wordMap.containsKey(aStrArray)) {
+                    wordMap.put(aStrArray, 1);
+                } else {
+                    int v = wordMap.get(aStrArray);
+                    wordMap.put(aStrArray, v + 1);
+                }
+            }
+        }
+
+        logger.info("word map {}", wordMap.toString());
+        return wordMap;
     }
 }
