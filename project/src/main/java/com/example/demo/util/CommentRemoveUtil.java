@@ -8,9 +8,16 @@ import java.io.IOException;
 import java.util.Scanner;
 
 public class CommentRemoveUtil {
+    private static final ResourceLoader resourceLoader = new DefaultResourceLoader();
+
+    private static final String targetFile = "data/util/cassandra.yaml";
+
     public static void main(String[] args) throws IOException {
-        ResourceLoader resourceLoader = new DefaultResourceLoader();
-        File file = resourceLoader.getResource("data/util/cassandra.yaml").getFile();
+        CommentRemoveUtil.refine(targetFile);
+    }
+
+    public static void refine(String targetFile) throws IOException {
+        File file = resourceLoader.getResource(targetFile).getFile();
         Scanner sc = new Scanner(file);
         while (sc.hasNext()) {
             String line = sc.nextLine();

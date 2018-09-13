@@ -11,11 +11,19 @@ import java.util.Map;
 
 public class PropertiesRefineUtil {
 
-    //args[0]: data/util/application-kafka.properties
-    //args[1]: /opt/jav-demo/project/conf/example.properties
+    private static final String propsPath = "data/util/application-kafka.properties";
+
+    private static final String filePath = "/opt/java-demo/project/conf/example.properties";
+
     public static void main(String[] args) throws IOException {
+        PropertiesRefineUtil.replace(propsPath, filePath);
+    }
+
+    //args[0]: data/util/application-kafka.properties
+    //args[1]: /opt/java-demo/project/conf/example.properties
+    public static void replace(String propsPath, String filePath) throws IOException {
         Map<String, String> result = new LinkedHashMap<>();
-        Resource resource = new ClassPathResource(args[0]);
+        Resource resource = new ClassPathResource(propsPath);
         BufferedReader reader = new BufferedReader(new FileReader(resource.getFile()));
         String sCurrentLine;
         while ((sCurrentLine = reader.readLine()) != null) {
@@ -26,7 +34,7 @@ public class PropertiesRefineUtil {
         }
 
         for (Map.Entry entry : result.entrySet()) {
-            System.out.println("sed -i \"s#@" + entry.getKey() + "@${" + entry.getKey() + ":" + entry.getValue() + "}\" " + args[1]);
+            System.out.println("sed -i \"s#@" + entry.getKey() + "@${" + entry.getKey() + ":" + entry.getValue() + "}\" " + filePath);
         }
     }
 }
