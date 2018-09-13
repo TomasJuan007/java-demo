@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class PropertiesRefineUtil {
 
-    //args[0]: /application-kafka.properties
+    //args[0]: data/util/application-kafka.properties
     //args[1]: /opt/jav-demo/project/conf/example.properties
     public static void main(String[] args) throws IOException {
         Map<String, String> result = new LinkedHashMap<>();
