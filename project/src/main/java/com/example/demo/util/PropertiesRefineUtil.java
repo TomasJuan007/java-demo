@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class PropertiesRefineUtil {
 
-    private static final String propsPath = "data/util/application-kafka.properties";
+    private static final String propsPath = "application-kafka.properties";
 
     private static final String filePath = "/opt/java-demo/project/conf/example.properties";
 
@@ -19,8 +19,6 @@ public class PropertiesRefineUtil {
         PropertiesRefineUtil.replace(propsPath, filePath);
     }
 
-    //args[0]: data/util/application-kafka.properties
-    //args[1]: /opt/java-demo/project/conf/example.properties
     public static void replace(String propsPath, String filePath) throws IOException {
         Map<String, String> result = new LinkedHashMap<>();
         Resource resource = new ClassPathResource(propsPath);

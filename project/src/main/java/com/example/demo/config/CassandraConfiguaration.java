@@ -11,13 +11,13 @@ import org.springframework.data.cassandra.mapping.CassandraMappingContext;
 public class CassandraConfiguaration extends AbstractCassandraConfiguration {
     @Override
     protected String getKeyspaceName() {
-        return "testKeySpace";
+        return "test";
     }
 
     @Bean
     public CassandraClusterFactoryBean cluster() {
         CassandraClusterFactoryBean cluster = new CassandraClusterFactoryBean();
-        cluster.setContactPoints("10.175.172.251");
+        cluster.setContactPoints("localhost");
         cluster.setPort(9042);
         return cluster;
     }
