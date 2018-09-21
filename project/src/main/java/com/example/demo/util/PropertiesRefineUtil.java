@@ -11,7 +11,7 @@ import java.util.Map;
 
 public class PropertiesRefineUtil {
 
-    private static final String propsPath = "application-kafka.properties";
+    private static final String propsPath = "data/util/application-kafka.properties";
 
     private static final String filePath = "/opt/java-demo/project/conf/example.properties";
 
