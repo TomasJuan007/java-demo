@@ -169,7 +169,7 @@ public class TextServiceImpl implements TextService {
             for (int d=0; d<equalIndex; d++) {
                 fea.append(strChar[d]);
             }
-            System.out.println(fea);
+            logger.info(fea.toString());
         }
         return tfIdfMap;
     }

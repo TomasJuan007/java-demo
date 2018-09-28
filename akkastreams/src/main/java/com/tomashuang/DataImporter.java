@@ -8,7 +8,10 @@ import akka.stream.javadsl.Flow;
 import akka.stream.javadsl.Keep;
 import akka.stream.javadsl.Sink;
 import akka.stream.scaladsl.Source;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.lang.invoke.MethodHandles;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -16,6 +19,7 @@ import java.util.concurrent.CompletionStage;
 import java.util.stream.Collectors;
 
 public class DataImporter {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
     private final ActorSystem actorSystem;
     private final AverageRepository averageRepository = new AverageRepository();
 
@@ -65,9 +69,9 @@ public class DataImporter {
                 .runWith(storeAverages(), ActorMaterializer.create(actorSystem))
                 .whenComplete((d, e) -> {
                     if (d != null) {
-                        System.out.println("Import finished ");
+                        logger.info("Import finished.");
                     } else {
-                        e.printStackTrace();
+                        logger.warn("Exception occurs!", e);
                     }
                 });
     }

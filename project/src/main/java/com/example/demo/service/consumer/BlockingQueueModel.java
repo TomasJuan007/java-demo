@@ -1,10 +1,16 @@
 package com.example.demo.service.consumer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.lang.invoke.MethodHandles;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class BlockingQueueModel implements Model {
+    private static final Logger logger = LoggerFactory.getLogger(MethodHandles.lookup().lookupClass());
+
     private final BlockingQueue<Task> queue;
     private final AtomicInteger increTaskNo = new AtomicInteger(0);
 
@@ -39,7 +45,7 @@ public class BlockingQueueModel implements Model {
             Task task = queue.take();
             // 固定时间范围的消费，模拟相对稳定的服务器处理过程
             Thread.sleep(500 + (long) (Math.random() * 500));
-            System.out.println("consume: " + task.no);
+            logger.info("consume: " + task.no);
         }
     }
 
@@ -50,7 +56,7 @@ public class BlockingQueueModel implements Model {
             Thread.sleep((long) (Math.random() * 1000));
             Task task = new Task(increTaskNo.getAndIncrement());
             queue.put(task);
-            System.out.println("produce: " + task.no);
+            logger.info("produce: " + task.no);
         }
     }
 }

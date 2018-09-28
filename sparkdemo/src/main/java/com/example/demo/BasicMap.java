@@ -11,7 +11,7 @@ import org.apache.spark.api.java.function.Function;
 import java.util.Arrays;
 
 public class BasicMap {
-  public static void main(String[] args) throws Exception {
+  public static void main(String[] args) {
     String master;
     if (args.length > 0) {
       master = args[0];
