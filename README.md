@@ -16,6 +16,8 @@ producer consumer
 integration test
 
 cassandra
+
+sonar
 ## others
 akka-streams
 
