@@ -37,7 +37,7 @@ public class H2Test {
         Class.forName("org.h2.Driver");
         try (Connection conn = DriverManager
                 .getConnection("jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;MODE=PostgreSQL;INIT=runscript from '"
-                        + rootPath + "/create.sql'", "", "");
+                        + rootPath + "/create.sql'", "sa", "");
                 Statement statement = conn.createStatement()) {
             ResultSet resultSet = statement.executeQuery("select * from test");
             if (!resultSet.next())
