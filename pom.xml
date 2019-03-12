@@ -15,7 +15,8 @@
 		<module>project</module>
 		<module>akkastreams</module>
 		<module>sparkdemo</module>
-	</modules>
+        <module>offer</module>
+    </modules>
 
 	<properties>
 		<jacoco.version>0.7.9</jacoco.version>
