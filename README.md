@@ -22,3 +22,5 @@ sonar
 akka-streams
 
 spark-demo
+
+crawler-demo

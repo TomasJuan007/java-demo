@@ -15,7 +15,7 @@
 		<module>project</module>
 		<module>akkastreams</module>
 		<module>sparkdemo</module>
-        <module>offer</module>
+        <module>crawlerdemo</module>
     </modules>
 
 	<properties>
