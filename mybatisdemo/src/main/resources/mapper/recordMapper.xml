@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.example.mybatisdemo.mapper.RecordMapper">
+  <select id="selectAllEvent" resultType="com.example.mybatisdemo.model.Record">
+  	select * from record
+  </select>
+  <insert id="addEvent" parameterType="com.example.mybatisdemo.model.Record">
+  	insert into record (event,date,location) values(#{event},#{date},#{location})
+  </insert>
+  <update id="updateEvent" parameterType="com.example.mybatisdemo.model.Record">
+  	update record set date=#{date},location=#{location} where id=#{id}
+  </update>
+  <delete id="deleteEvent" parameterType="int">
+  	delete from record where id=#{id}
+  </delete>
+</mapper>
