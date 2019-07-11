@@ -23,6 +23,4 @@ akka-streams
 
 spark-demo
 
-crawler-demo
-
 mybatis-demo

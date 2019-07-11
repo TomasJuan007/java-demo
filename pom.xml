@@ -15,7 +15,6 @@
 		<module>project</module>
 		<module>akkastreams</module>
 		<module>sparkdemo</module>
-        <module>crawlerdemo</module>
 		<module>mybatisdemo</module>
     </modules>
 
