@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>com.example</groupId>
-	<artifactId>demo</artifactId>
+	<artifactId>java-demo</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
@@ -12,10 +12,11 @@
 	<description>Demo project for Spring Boot</description>
 
 	<modules>
-		<module>project</module>
-		<module>akkastreams</module>
-		<module>sparkdemo</module>
-		<module>mybatisdemo</module>
+		<module>java-module</module>
+		<module>akka-streams-demo</module>
+		<module>spark-demo</module>
+		<module>mybatis-demo</module>
+		<module>jmx-demo</module>
     </modules>
 
 	<properties>

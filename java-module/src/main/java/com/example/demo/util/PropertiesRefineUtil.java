@@ -13,7 +13,7 @@ public class PropertiesRefineUtil {
 
     private static final String propsPath = "data/util/application-kafka.properties";
 
-    private static final String filePath = "/opt/java-demo/project/conf/example.properties";
+    private static final String filePath = "/opt/java-demo/java-module/conf/example.properties";
 
     public static void main(String[] args) throws IOException {
         PropertiesRefineUtil.replace(propsPath, filePath);

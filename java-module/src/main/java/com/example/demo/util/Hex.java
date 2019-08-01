@@ -33,7 +33,7 @@ public class Hex {
      *
      * @param data An array of characters containing hexadecimal digits
      * @return A byte array containing binary data decoded from the supplied char array.
-     * @throws DecoderException Thrown if an odd number or illegal of characters is supplied
+     * @throws IllegalArgumentException Thrown if an odd number or illegal of characters is supplied
      */
     public static byte[] decodeHex(final char[] data) throws IllegalArgumentException {
 
@@ -122,7 +122,7 @@ public class Hex {
      * @param ch A character to convert to an integer digit
      * @param index The index of the character in the source
      * @return An integer
-     * @throws DecoderException Thrown if ch is an illegal hex character
+     * @throws IllegalArgumentException Thrown if ch is an illegal hex character
      */
     protected static int toDigit(final char ch, final int index) throws IllegalArgumentException {
         final int digit = Character.digit(ch, 16);
@@ -171,7 +171,7 @@ public class Hex {
      *
      * @param array An array of character bytes containing hexadecimal digits
      * @return A byte array containing binary data decoded from the supplied byte array (representing characters).
-     * @throws DecoderException Thrown if an odd number of characters is supplied to this function
+     * @throws IllegalArgumentException Thrown if an odd number of characters is supplied to this function
      * @see #decodeHex(char[])
      */
     public byte[] decode(final byte[] array) throws IllegalArgumentException {
@@ -185,7 +185,7 @@ public class Hex {
      *
      * @param object A String or, an array of character bytes containing hexadecimal digits
      * @return A byte array containing binary data decoded from the supplied byte array (representing characters).
-     * @throws DecoderException Thrown if an odd number of characters is supplied to this function or the object is not
+     * @throws IllegalArgumentException Thrown if an odd number of characters is supplied to this function or the object is not
      *         a String or char[]
      * @see #decodeHex(char[])
      */
@@ -227,7 +227,7 @@ public class Hex {
      *
      * @param object a String, or byte[] to convert to Hex characters
      * @return A char[] containing hexadecimal characters
-     * @throws EncoderException Thrown if the given object is not a String or byte[]
+     * @throws IllegalArgumentException Thrown if the given object is not a String or byte[]
      * @see #encodeHex(byte[])
      */
     public Object encode(final Object object) throws IllegalArgumentException {
