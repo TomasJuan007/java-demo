@@ -7,7 +7,7 @@ import org.apache.ibatis.annotations.SelectProvider;
 import java.util.List;
 
 
-public interface RecordMapper {
+public interface EventMapper {
 	@SelectProvider(type= SqlProvider.class,method="selectEventByID")
 	Record selectEventByID(int id);
 	List<Record> selectAllEvent();
