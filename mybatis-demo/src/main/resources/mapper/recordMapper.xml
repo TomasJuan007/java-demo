@@ -2,21 +2,21 @@
 <!DOCTYPE mapper
   PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="com.example.mybatisdemo.mapper.EventMapper">
-  <select id="selectAllEvent" resultType="com.example.mybatisdemo.model.Record">
-  	select * from event
+<mapper namespace="com.example.mybatisdemo.mapper.RecordMapper">
+  <select id="selectAllRecord" resultType="com.example.mybatisdemo.model.Record">
+  	select * from record
   </select>
-  <insert id="addEvent" parameterType="com.example.mybatisdemo.model.Record">
-  	insert into event (event,priority,value,interest,status,estimate,create_time,update_time,delete_time,lft,rgt)
+  <insert id="addRecord" parameterType="com.example.mybatisdemo.model.Record">
+  	insert into record (event,priority,value,interest,status,estimate,create_time,update_time,delete_time,lft,rgt)
       values(#{event},#{priority},#{value},#{interest},#{status},#{estimate},
       #{createTime},#{updateTime},#{deleteTime},#{lft},#{rgt})
   </insert>
-  <update id="updateEvent" parameterType="com.example.mybatisdemo.model.Record">
-  	update event set event=#{event},priority=#{priority},value=#{value},interest=#{interest},
+  <update id="updateRecord" parameterType="com.example.mybatisdemo.model.Record">
+  	update record set event=#{event},priority=#{priority},value=#{value},interest=#{interest},
       status=#{status},estimate=#{estimate},create_time=#{createTime},
       update_time=#{updateTime} ,delete_time=#{deleteTime},lft=#{lft},rgt=#{rgt} where id=#{id}
   </update>
-  <delete id="deleteEvent" parameterType="int">
-  	delete from event where id=#{id}
+  <delete id="deleteRecord" parameterType="int">
+  	delete from record where id=#{id}
   </delete>
 </mapper>

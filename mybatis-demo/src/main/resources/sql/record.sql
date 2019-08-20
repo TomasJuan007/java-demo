@@ -18,8 +18,8 @@ SET FOREIGN_KEY_CHECKS=0;
 -- ----------------------------
 -- Table structure for `record`
 -- ----------------------------
-DROP TABLE IF EXISTS `event`;
-CREATE TABLE `event` (
+DROP TABLE IF EXISTS `record`;
+CREATE TABLE `record` (
   `id` int(5) NOT NULL AUTO_INCREMENT,
   `event` varchar(20) CHARACTER SET utf8 DEFAULT NULL,
   `priority` int(5),

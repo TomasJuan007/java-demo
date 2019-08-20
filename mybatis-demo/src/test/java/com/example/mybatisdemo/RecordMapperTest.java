@@ -1,6 +1,6 @@
 package com.example.mybatisdemo;
 
-import com.example.mybatisdemo.mapper.EventMapper;
+import com.example.mybatisdemo.mapper.RecordMapper;
 import com.example.mybatisdemo.model.Record;
 import com.example.mybatisdemo.util.MyBaitisUtils;
 import org.apache.ibatis.session.SqlSession;
@@ -9,60 +9,60 @@ import org.junit.Test;
 import java.io.IOException;
 import java.util.List;
 
-public class EventMapperTest {
+public class RecordMapperTest {
 
 	@Test
-	public void testSelectEventById() throws IOException {
+	public void testSelectRecordById() throws IOException {
 		SqlSession session = MyBaitisUtils.openSession();
-		EventMapper mapper = session.getMapper(EventMapper.class);
-		Record record = mapper.selectEventByID(1);
+		RecordMapper mapper = session.getMapper(RecordMapper.class);
+		Record record = mapper.selectRecordByID(1);
 		session.close();
 		System.out.println(record);
 	}
 
 	@Test
-	public void testSelectAllEvent() throws IOException {
+	public void testSelectAllRecord() throws IOException {
 		SqlSession session = MyBaitisUtils.openSession();
-		EventMapper mapper = session.getMapper(EventMapper.class);
-		List<Record> list = mapper.selectAllEvent();
+		RecordMapper mapper = session.getMapper(RecordMapper.class);
+		List<Record> list = mapper.selectAllRecord();
 		session.close();
 		System.out.println(list);
 	}
 	
 	@Test
-	public void testAddEvent() throws IOException {
+	public void testAddRecord() throws IOException {
 		SqlSession session = MyBaitisUtils.openSession();
-		EventMapper mapper = session.getMapper(EventMapper.class);
+		RecordMapper mapper = session.getMapper(RecordMapper.class);
 		Record record = new Record();
 		java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 		record.setEvent("Guangzhou");
 		record.setCreateTime(sqlDate);
-		mapper.addEvent(record);
+		mapper.addRecord(record);
 		session.commit();
 		session.close();
 	}
 	
 	@Test
-	public void testUpdateEvent() throws IOException {
+	public void testUpdateRecord() throws IOException {
 		SqlSession session = MyBaitisUtils.openSession();
-		EventMapper mapper = session.getMapper(EventMapper.class);
+		RecordMapper mapper = session.getMapper(RecordMapper.class);
 		Record record = new Record();
 		int id = 1;
 		record.setId(id);
 		java.sql.Date sqlDate = new java.sql.Date(System.currentTimeMillis());
 		record.setCreateTime(sqlDate);
 		record.setEvent("Shenzhen");
-		mapper.updateEvent(record);
+		mapper.updateRecord(record);
 		session.commit();
 		session.close();
 	}
 	
 	@Test
-	public void testDeleteEvent() throws IOException {
+	public void testDeleteRecord() throws IOException {
 		SqlSession session = MyBaitisUtils.openSession();
-		EventMapper mapper = session.getMapper(EventMapper.class);
+		RecordMapper mapper = session.getMapper(RecordMapper.class);
 		int id = 1;
-		mapper.deleteEvent(id);
+		mapper.deleteRecord(id);
 		session.commit();
 		session.close();
 	}

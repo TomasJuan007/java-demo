@@ -13,7 +13,7 @@ public class MyTest {
 	@Test
 	public void testSelect() throws IOException {
 		SqlSession session= MyBaitisUtils.openSession();
-		String statement="com.example.mybatisdemo.mapper.EventMapper.selectAllEvent";
+		String statement="com.example.mybatisdemo.mapper.RecordMapper.selectAllRecord";
 		List<Record> list = session.selectList(statement);
 		System.out.println(list);
 		session.close();
