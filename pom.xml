@@ -17,6 +17,7 @@
 		<module>spark-demo</module>
 		<module>mybatis-demo</module>
 		<module>jmx-demo</module>
+        <module>cache-demo</module>
     </modules>
 
 	<properties>
