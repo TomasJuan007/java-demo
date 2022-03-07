@@ -37,41 +37,35 @@ public class MyRedisCache extends RedisCache {
         RedisCacheKey redisCacheKey = getRedisCacheKey(key);
         ValueWrapper valueWrapper = this.get(redisCacheKey);
         try {
-            return getValueWrapper(valueWrapper, key, redisCacheKey);
+            return getValueWrapper(valueWrapper, key);
         } catch (Exception e) {
             LOGGER.error("MyRedisCache#get error, key:{},cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
             return valueWrapper;
         }
     }
 
-    private RedisCacheKey getRedisCacheKey(Object key) {
-        RedisCacheKey redisCacheKey = new RedisCacheKey(key)
-                .usePrefix(this.prefix)
-                .withKeySerializer(this.redisOperations.getKeySerializer());
-        return redisCacheKey;
-    }
+    private ValueWrapper getValueWrapper(ValueWrapper valueWrapper, Object key) {
+        if (!this.isRefresh) {
+            return valueWrapper;
+        }
 
-    private ValueWrapper getValueWrapper(ValueWrapper valueWrapper, Object key, RedisCacheKey redisCacheKey) {
+        RedisCacheKey redisCacheKey = getRedisCacheKey(key);
+        String cacheKeyStr = new String(redisCacheKey.getKeyBytes());
+
         if (valueWrapper!=null) {
-            Long ttl = this.redisOperations.getExpire(getCacheKey(key));
-            if (this.isRefresh && ttl!=null && ttl<preloadSecond) {
-                ValueWrapper vw = getDataLock(key,redisCacheKey);
+            Long ttl = this.redisOperations.getExpire(cacheKeyStr);
+            if (ttl!=null && ttl<preloadSecond) {
+                ValueWrapper vw = getDataLock(key);
                 if (vw!=null) {
                     return vw;
                 }
             }
             return valueWrapper;
         } else {
-            if (!this.isRefresh) {
-                return valueWrapper;
-            }
-
-            ValueWrapper vw = getDataLock(key,redisCacheKey);
-            if (vw!=null) {
-                return vw;
-            } else {
+            ValueWrapper vw = getDataLock(key);
+            if (vw == null) {
                 int i = 0;
-                while (vw==null) {
+                while (vw == null) {
                     try {
                         Thread.sleep(200L);
                         vw = this.get(redisCacheKey);
@@ -83,28 +77,30 @@ public class MyRedisCache extends RedisCache {
                         break;
                     }
                 }
-                return vw;
             }
+            return vw;
         }
     }
 
-    private ValueWrapper getDataLock(Object key, RedisCacheKey redisCacheKey) {
+    private ValueWrapper getDataLock(Object key) {
+        RedisCacheKey redisCacheKey = getRedisCacheKey(key);
+        String cacheKeyStr = new String(redisCacheKey.getKeyBytes());
         try {
-            RedisLock redisLock = new RedisLock((RedisTemplate) redisOperations, getCacheKey(key));
+            RedisLock redisLock = new RedisLock((RedisTemplate) redisOperations, cacheKeyStr);
             if (redisLock.easyLock()) {
                 try {
                     refreshCache(key.toString());
                     return this.get(redisCacheKey);
                 } catch (Exception e) {
-                    LOGGER.error("MyRedisCache#getDataLock refresh error, key:{}, cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
+                    LOGGER.error("MyRedisCache#getDataLock refresh error, key:{}, cacheKey:{}", key, cacheKeyStr);
                 } finally {
                     redisLock.unlock();
                 }
             }
         } catch (Exception e) {
-            LOGGER.error("MyRedisCache#getDataLock set lock error, key:{}, cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
+            LOGGER.error("MyRedisCache#getDataLock set lock error, key:{}, cacheKey:{}", key, cacheKeyStr);
         }
-        LOGGER.error("MyRedisCache#getDataLock lock failed, key:{}, cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
+        LOGGER.error("MyRedisCache#getDataLock lock failed, key:{}, cacheKey:{}", key, cacheKeyStr);
         return null;
     }
 
@@ -116,13 +112,17 @@ public class MyRedisCache extends RedisCache {
                 this.put(key, invoke);
                 this.redisOperations.expire(key, expireSecond, TimeUnit.SECONDS);
             } catch (Exception e) {
-                LOGGER.error("MyRedisCache#refreshCache error, key:{}, cacheKey:{}", key, getCacheKey(key));
+                RedisCacheKey redisCacheKey = getRedisCacheKey(key);
+                String cacheKeyStr= new String(redisCacheKey.getKeyBytes());
+                LOGGER.error("MyRedisCache#refreshCache error, key:{}, cacheKey:{}", key, cacheKeyStr);
             }
         }
     }
 
-    private String getCacheKey(Object key) {
-        RedisCacheKey redisCacheKey = getRedisCacheKey(key);
-        return new String(redisCacheKey.getKeyBytes());
+    private RedisCacheKey getRedisCacheKey(Object key) {
+        RedisCacheKey redisCacheKey = new RedisCacheKey(key)
+                .usePrefix(this.prefix)
+                .withKeySerializer(this.redisOperations.getKeySerializer());
+        return redisCacheKey;
     }
 }
