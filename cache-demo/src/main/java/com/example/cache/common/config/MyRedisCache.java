@@ -1,12 +1,14 @@
 package com.example.cache.common.config;
 
 import com.example.cache.common.service.itf.CacheSupport;
+import com.example.cache.common.util.RedisLock;
 import com.example.cache.common.vo.CachedInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.cache.RedisCache;
 import org.springframework.data.redis.cache.RedisCacheKey;
 import org.springframework.data.redis.core.RedisOperations;
+import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
@@ -91,13 +93,22 @@ public class MyRedisCache extends RedisCache {
     }
 
     private ValueWrapper getDataLock(Object key, RedisCacheKey redisCacheKey) {
-        //TODO: redis lock
         try {
-            refreshCache(key.toString());
-            return this.get(redisCacheKey);
+            RedisLock redisLock = new RedisLock((RedisTemplate) redisOperations, getCacheKey(key)+":redis_lock");
+            if (redisLock.easyLock()) {
+                try {
+                    refreshCache(key.toString());
+                    return this.get(redisCacheKey);
+                } catch (Exception e) {
+                    LOGGER.error("MyRedisCache#getDataLock refresh error, key:{}, cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
+                } finally {
+                    redisLock.unlock();
+                }
+            }
         } catch (Exception e) {
-            LOGGER.error("MyRedisCache#getDataLock refresh error, key:{}, cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
+            LOGGER.error("MyRedisCache#getDataLock set lock error, key:{}, cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
         }
+        LOGGER.error("MyRedisCache#getDataLock lock failed, key:{}, cacheKey:{}", key, new String(redisCacheKey.getKeyBytes()));
         return null;
     }
 
