@@ -34,7 +34,7 @@ public class CacheSupportImpl implements CacheSupport, InvocationRegistry {
     public Object refreshCache(CachedInvocation invocation) throws Exception {
         final MethodInvoker invoker = new MethodInvoker();
         invoker.setTargetObject(invocation.getTargetBean());
-        invoker.setStaticMethod(invocation.getTargetMethod().getName());
+        invoker.setTargetMethod(invocation.getTargetMethod().getName());
         invoker.setArguments(invoker.getArguments());
         invoker.prepare();
         return invoker.invoke();

@@ -94,7 +94,7 @@ public class MyRedisCache extends RedisCache {
 
     private ValueWrapper getDataLock(Object key, RedisCacheKey redisCacheKey) {
         try {
-            RedisLock redisLock = new RedisLock((RedisTemplate) redisOperations, getCacheKey(key)+":redis_lock");
+            RedisLock redisLock = new RedisLock((RedisTemplate) redisOperations, getCacheKey(key));
             if (redisLock.easyLock()) {
                 try {
                     refreshCache(key.toString());

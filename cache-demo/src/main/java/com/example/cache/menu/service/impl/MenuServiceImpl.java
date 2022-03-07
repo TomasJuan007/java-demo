@@ -48,7 +48,7 @@ public class MenuServiceImpl implements MenuService {
 
         //模拟获取置顶菜单和用户常用菜单
         try {
-            sleep(60000L);
+            sleep(5000L);
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
         }
