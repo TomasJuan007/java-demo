@@ -1,4 +1,4 @@
-package com.example.cache.common.config;
+package com.example.cache.common.ehcache.config;
 
 import org.ehcache.Cache;
 import org.ehcache.CacheManager;
@@ -13,6 +13,9 @@ import org.springframework.context.annotation.Configuration;
 import java.time.Duration;
 import java.util.List;
 
+/**
+ * 增加一级缓存，减少使用redis缓存
+ */
 @Configuration
 public class EhcacheConfig {
     private static String MENU_LIST_INFO = "menuListInfo";

@@ -1,7 +1,7 @@
-package com.example.cache.common.aspect;
+package com.example.cache.common.invoke.aspect;
 
-import com.example.cache.common.annotation.MyRefreshCacheKey;
-import com.example.cache.common.service.itf.InvocationRegistry;
+import com.example.cache.common.invoke.annotation.MyCacheMethodInvoker;
+import com.example.cache.common.invoke.invocation.InvocationRegistry;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.Aspect;
 import org.aspectj.lang.annotation.Before;
@@ -19,11 +19,11 @@ public class MyCacheMethodInvokerAspect {
     @Autowired
     private InvocationRegistry cacheRefreshSupport;
 
-    @Before("@annotation(com.example.cache.common.annotation.MyRefreshCacheKey)")
+    @Before("@annotation(com.example.cache.common.invoke.annotation.MyCacheMethodInvoker)")
     public void doBefore(JoinPoint joinPoint) {
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();
         Method method = methodSignature.getMethod();
-        MyRefreshCacheKey myRefreshCacheKey = method.getAnnotation(MyRefreshCacheKey.class);
-        cacheRefreshSupport.registerInvocation(joinPoint.getTarget(), method, joinPoint.getArgs(), myRefreshCacheKey.value());
+        MyCacheMethodInvoker myCacheMethodInvoker = method.getAnnotation(MyCacheMethodInvoker.class);
+        cacheRefreshSupport.registerInvocation(joinPoint.getTarget(), method, joinPoint.getArgs(), myCacheMethodInvoker.value());
     }
 }

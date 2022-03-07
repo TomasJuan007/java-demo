@@ -1,6 +1,6 @@
-package com.example.cache.common.aspect;
+package com.example.cache.common.ehcache.aspect;
 
-import com.example.cache.common.annotation.MyEhCache;
+import com.example.cache.common.ehcache.annotation.MyEhCache;
 import org.apache.commons.lang3.StringUtils;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -25,7 +25,7 @@ public class MyEhCacheAspect {
     @Autowired
     private ApplicationContext applicationContext;
 
-    @Around("@annotation(com.example.cache.common.annotation.MyEhCache)")
+    @Around("@annotation(com.example.cache.common.ehcache.annotation.MyEhCache)")
     public Object doAround(ProceedingJoinPoint joinPoint) throws Throwable {
         Object result;
         MethodSignature methodSignature = (MethodSignature) joinPoint.getSignature();

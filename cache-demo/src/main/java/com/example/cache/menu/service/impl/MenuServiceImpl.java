@@ -1,6 +1,6 @@
 package com.example.cache.menu.service.impl;
 
-import com.example.cache.common.cache.MenuCache;
+import com.example.cache.menu.cache.MenuCache;
 import com.example.cache.menu.model.Menu;
 import com.example.cache.menu.service.MenuService;
 import org.apache.commons.collections4.CollectionUtils;
@@ -24,8 +24,8 @@ public class MenuServiceImpl implements MenuService {
     private MenuCache menuCache;
 
     @Override
-    public List<Menu> getMenuList(String a) {
-        List<Menu> allMenuList = menuCache.get();
+    public List<Menu> getMenuList(boolean skipInject) {
+        List<Menu> allMenuList = menuCache.queryAllMenu();
         List<Menu> filteredMenuList = allMenuList.stream()
                 .filter(e -> e.getLevel()>0)
                 .collect(Collectors.toList());
@@ -35,7 +35,7 @@ public class MenuServiceImpl implements MenuService {
                 .collect(Collectors.groupingBy(Menu::getLevel));
         List<Menu> oneLevelList = collectByLevel.get(1);
         List<Menu> twoLevelList = collectByLevel.get(2);
-        if (CollectionUtils.isNotEmpty(twoLevelList) && a==null) {
+        if (CollectionUtils.isNotEmpty(twoLevelList) && !skipInject) {
             Map<Long, List<Menu>> twoLevelMenuMap = twoLevelList.stream()
                     .collect(Collectors.groupingBy(Menu::getPid));
             for (Menu oneLevelMenu : oneLevelList) {
@@ -48,7 +48,7 @@ public class MenuServiceImpl implements MenuService {
 
         //模拟获取置顶菜单和用户常用菜单
         try {
-            sleep(5000L);
+            sleep(3000L);
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();
         }

@@ -1,6 +1,6 @@
-package com.example.cache.common.config;
+package com.example.cache.common.cache.data;
 
-import com.example.cache.common.service.itf.CacheSupport;
+import com.example.cache.common.invoke.invocation.CacheSupport;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.cache.Cache;
 import org.springframework.data.redis.cache.RedisCacheManager;

@@ -1,6 +1,7 @@
-package com.example.cache.common.config;
+package com.example.cache.common.cache.config;
 
-import com.example.cache.common.service.itf.CacheSupport;
+import com.example.cache.common.cache.data.MyRedisCacheManager;
+import com.example.cache.common.invoke.invocation.CacheSupport;
 import com.google.common.hash.Hashing;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -20,6 +21,10 @@ import java.nio.charset.Charset;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 1.增加缓存预刷新，防止缓存击穿或雪崩造成并发请求数据库
+ * 2.数据库取数加锁，防止并发
+ */
 @EnableCaching
 @Configuration
 public class RedisCacheConfig extends CachingConfigurerSupport {

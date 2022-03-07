@@ -1,8 +1,8 @@
-package com.example.cache.common.config;
+package com.example.cache.common.cache.data;
 
-import com.example.cache.common.service.itf.CacheSupport;
-import com.example.cache.common.util.RedisLock;
-import com.example.cache.common.vo.CachedInvocation;
+import com.example.cache.common.invoke.invocation.CacheSupport;
+import com.example.cache.common.cache.lock.RedisLock;
+import com.example.cache.common.invoke.invocation.CachedInvocation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.redis.cache.RedisCache;
@@ -12,11 +12,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 
 import java.util.concurrent.TimeUnit;
 
-/**
- * 1.增加一级缓存，减少使用redis缓存
- * 2.增加缓存预刷新，防止缓存击穿或雪崩造成并发请求数据库
- * 3.数据库取数加锁，防止并发
- */
 public class MyRedisCache extends RedisCache {
     private static final Logger LOGGER = LoggerFactory.getLogger(MyRedisCache.class);
 
@@ -50,7 +45,8 @@ public class MyRedisCache extends RedisCache {
     }
 
     private RedisCacheKey getRedisCacheKey(Object key) {
-        RedisCacheKey redisCacheKey = new RedisCacheKey(key).usePrefix(this.prefix)
+        RedisCacheKey redisCacheKey = new RedisCacheKey(key)
+                .usePrefix(this.prefix)
                 .withKeySerializer(this.redisOperations.getKeySerializer());
         return redisCacheKey;
     }

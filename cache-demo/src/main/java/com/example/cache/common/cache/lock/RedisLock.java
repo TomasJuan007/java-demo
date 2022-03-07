@@ -1,4 +1,4 @@
-package com.example.cache.common.util;
+package com.example.cache.common.cache.lock;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

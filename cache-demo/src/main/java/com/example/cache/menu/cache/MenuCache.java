@@ -1,8 +1,8 @@
-package com.example.cache.common.cache;
+package com.example.cache.menu.cache;
 
-import com.example.cache.common.annotation.MyRefreshCacheKey;
+import com.example.cache.common.invoke.annotation.MyCacheMethodInvoker;
 import com.example.cache.menu.model.Menu;
-import com.example.cache.common.annotation.MyEhCache;
+import com.example.cache.common.ehcache.annotation.MyEhCache;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Component;
 
@@ -13,9 +13,10 @@ import java.util.List;
 public class MenuCache {
 
     @MyEhCache("menuListInfoEhcache:menuListInfo")
-    @MyRefreshCacheKey(value = "menu:all")
+    @MyCacheMethodInvoker(value = "menu:all")
     @Cacheable(value = "menu#1680#60", key = "'all'")
-    public List<Menu> get() {
+    public List<Menu> queryAllMenu() {
+        //模拟查询数据库
         List<Menu> menuList = new ArrayList<>();
         Menu menu = new Menu();
         menu.setId(1L);

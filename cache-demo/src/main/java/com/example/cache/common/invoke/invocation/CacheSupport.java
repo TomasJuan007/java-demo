@@ -1,6 +1,4 @@
-package com.example.cache.common.service.itf;
-
-import com.example.cache.common.vo.CachedInvocation;
+package com.example.cache.common.invoke.invocation;
 
 public interface CacheSupport {
 
