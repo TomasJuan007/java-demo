@@ -5,5 +5,5 @@ import com.example.cache.menu.model.Menu;
 import java.util.List;
 
 public interface MenuService {
-    List<Menu> getMenuList();
+    List<Menu> getMenuList(String a);
 }

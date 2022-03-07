@@ -1,5 +1,6 @@
 package com.example.cache.common.cache;
 
+import com.example.cache.common.annotation.MyRefreshCacheKey;
 import com.example.cache.menu.model.Menu;
 import com.example.cache.common.annotation.MyEhCache;
 import org.springframework.cache.annotation.Cacheable;
@@ -12,6 +13,7 @@ import java.util.List;
 public class MenuCache {
 
     @MyEhCache("menuListInfoEhcache:menuListInfo")
+    @MyRefreshCacheKey(value = "menu:all")
     @Cacheable(value = "menu#1680#60", key = "'all'")
     public List<Menu> get() {
         List<Menu> menuList = new ArrayList<>();

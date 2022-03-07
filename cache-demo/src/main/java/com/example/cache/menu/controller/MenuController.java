@@ -13,7 +13,7 @@ public class MenuController {
 
     @RequestMapping("/test")
     public String test(String a) {
-        menuService.getMenuList();
+        menuService.getMenuList(a);
         return "ok";
     }
 }
