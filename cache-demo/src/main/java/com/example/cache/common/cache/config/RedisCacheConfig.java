@@ -23,7 +23,7 @@ import java.util.Map;
 
 /**
  * 1.增加缓存预刷新，防止缓存击穿或雪崩造成并发请求数据库
- * 2.数据库取数加锁，防止并发
+ * 2.预刷新加锁，防止并发
  */
 @EnableCaching
 @Configuration

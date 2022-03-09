@@ -120,7 +120,7 @@ public class RedisLock {
             timeout -= DEFAULT_ACQUIRE_RESOLUTION_MILLIS;
 
             this.wait(DEFAULT_ACQUIRE_RESOLUTION_MILLIS);
-            }
+        }
         return false;
     }
 

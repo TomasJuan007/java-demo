@@ -53,16 +53,18 @@ public class MyRedisCache extends RedisCache {
         String cacheKeyStr = new String(redisCacheKey.getKeyBytes());
 
         if (valueWrapper!=null) {
+            //如果能获取到数据，检查是否需要预刷新
             Long ttl = this.redisOperations.getExpire(cacheKeyStr);
             if (ttl!=null && ttl<preloadSecond) {
-                ValueWrapper vw = getDataLock(key);
+                ValueWrapper vw = refreshAndGet(key);
                 if (vw!=null) {
                     return vw;
                 }
             }
             return valueWrapper;
         } else {
-            ValueWrapper vw = getDataLock(key);
+            //如果获取不到数据，直接刷新，并在失败的情况下做五次重试
+            ValueWrapper vw = refreshAndGet(key);
             if (vw == null) {
                 int i = 0;
                 while (vw == null) {
@@ -82,7 +84,7 @@ public class MyRedisCache extends RedisCache {
         }
     }
 
-    private ValueWrapper getDataLock(Object key) {
+    private ValueWrapper refreshAndGet(Object key) {
         RedisCacheKey redisCacheKey = getRedisCacheKey(key);
         String cacheKeyStr = new String(redisCacheKey.getKeyBytes());
         try {

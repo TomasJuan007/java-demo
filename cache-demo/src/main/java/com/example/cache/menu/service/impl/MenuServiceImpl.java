@@ -28,10 +28,10 @@ public class MenuServiceImpl implements MenuService {
         List<Menu> allMenuList = menuCache.queryAllMenu();
         List<Menu> filteredMenuList = allMenuList.stream()
                 .filter(e -> e.getLevel()>0)
-                .collect(Collectors.toList());
-        Map<Integer, List<Menu>> collectByLevel = filteredMenuList.stream()
                 //生产问题所在，获取到的菜单列表直接使用了缓存的对象
                 .map(SerializationUtils::clone)
+                .collect(Collectors.toList());
+        Map<Integer, List<Menu>> collectByLevel = filteredMenuList.stream()
                 .collect(Collectors.groupingBy(Menu::getLevel));
         List<Menu> oneLevelList = collectByLevel.get(1);
         List<Menu> twoLevelList = collectByLevel.get(2);
