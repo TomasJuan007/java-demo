@@ -2,6 +2,7 @@ package com.example.cache.menu.service.impl;
 
 import com.example.cache.menu.cache.MenuCache;
 import com.example.cache.menu.model.Menu;
+import com.example.cache.menu.property.EhCacheProperties;
 import com.example.cache.menu.service.MenuService;
 import org.apache.commons.collections4.CollectionUtils;
 import org.apache.commons.lang3.SerializationUtils;
@@ -22,15 +23,26 @@ public class MenuServiceImpl implements MenuService {
 
     @Autowired
     private MenuCache menuCache;
+    @Autowired
+    private EhCacheProperties ehCacheProperties;
 
     @Override
     public List<Menu> getMenuList(boolean skipInject) {
         List<Menu> allMenuList = menuCache.queryAllMenu();
-        List<Menu> filteredMenuList = allMenuList.stream()
-                .filter(e -> e.getLevel()>0)
-                //生产问题所在，获取到的菜单列表直接使用了缓存的对象
-                .map(SerializationUtils::clone)
-                .collect(Collectors.toList());
+        //如果ehcache切面克隆开关已经打开，不需要再克隆
+        List<Menu> filteredMenuList;
+        if (ehCacheProperties.isEhcacheCloneSwitch()) {
+            filteredMenuList = allMenuList.stream()
+                    .filter(e -> e.getLevel()>0)
+                    //生产问题所在，获取到的菜单列表直接使用了缓存的对象
+                    .map(SerializationUtils::clone)
+                    .collect(Collectors.toList());
+            LOGGER.info("MenuServiceImpl#getMenuList cloned.");
+        } else {
+            filteredMenuList = allMenuList.stream()
+                    .filter(e -> e.getLevel()>0)
+                    .collect(Collectors.toList());
+        }
         Map<Integer, List<Menu>> collectByLevel = filteredMenuList.stream()
                 .collect(Collectors.groupingBy(Menu::getLevel));
         List<Menu> oneLevelList = collectByLevel.get(1);
