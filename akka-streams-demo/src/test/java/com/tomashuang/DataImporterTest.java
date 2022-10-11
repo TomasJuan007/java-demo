@@ -8,7 +8,7 @@ import akka.stream.scaladsl.Source;
 import akka.stream.testkit.javadsl.TestSink;
 import org.junit.Test;
 
-public class DataImporterUnitTest {
+public class DataImporterTest {
     private final ActorSystem actorSystem = ActorSystem.create();
 
     @Test
@@ -31,7 +31,7 @@ public class DataImporterUnitTest {
     public void givenStreamOfIntegers_whenCalculateAverageAndSaveToSink_thenShouldFinishSuccessfully() {
         //given
         DataImporter dataImporter = new DataImporter(actorSystem);
-        String input = "10;90;110;10";
+        String input = "10;90;110;10;20;30;60;90";
 
         //when
         dataImporter.calculateAverageForContent(input)
