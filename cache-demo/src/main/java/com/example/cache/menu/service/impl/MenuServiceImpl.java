@@ -34,7 +34,7 @@ public class MenuServiceImpl implements MenuService {
         if (ehCacheProperties.isEhcacheCloneSwitch()) {
             filteredMenuList = allMenuList.stream()
                     .filter(e -> e.getLevel()>0)
-                    //生产问题所在，获取到的菜单列表直接使用了缓存的对象
+                    //获取到的菜单列表直接使用了缓存的对象，修改补充对列表克隆
                     .map(SerializationUtils::clone)
                     .collect(Collectors.toList());
             LOGGER.info("MenuServiceImpl#getMenuList cloned.");
@@ -60,6 +60,7 @@ public class MenuServiceImpl implements MenuService {
 
         //模拟获取置顶菜单和用户常用菜单
         try {
+            LOGGER.info("sleeping, wait for it...");
             sleep(3000L);
         } catch (InterruptedException interruptedException) {
             interruptedException.printStackTrace();

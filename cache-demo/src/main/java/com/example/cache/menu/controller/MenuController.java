@@ -19,9 +19,8 @@ public class MenuController {
     private MenuService menuService;
 
     @RequestMapping("/test")
-    public String test(boolean skipInject) {
-        List<Menu> menuList = menuService.getMenuList(skipInject);
-        LOGGER.info("MenuController#test menuList:{}", menuList);
-        return "ok";
+    public List<Menu> test(boolean skipInject) {
+        LOGGER.info("testing begin...");
+        return menuService.getMenuList(skipInject);
     }
 }
