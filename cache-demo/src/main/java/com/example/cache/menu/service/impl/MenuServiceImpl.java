@@ -1,11 +1,11 @@
 package com.example.cache.menu.service.impl;
 
+import com.example.cache.common.utils.OrikaUtils;
 import com.example.cache.menu.cache.MenuCache;
 import com.example.cache.menu.model.Menu;
 import com.example.cache.menu.property.EhCacheProperties;
 import com.example.cache.menu.service.MenuService;
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,10 +32,10 @@ public class MenuServiceImpl implements MenuService {
         //如果ehcache切面克隆开关已经打开，不需要再克隆
         List<Menu> filteredMenuList;
         if (ehCacheProperties.isEhcacheCloneSwitch()) {
-            filteredMenuList = allMenuList.stream()
+            //将JVM缓存的对象设置为不可变对象，如果需要修改在业务代码中手动深拷贝
+            List<Menu> allMenuCopyList = OrikaUtils.convertList(allMenuList, Menu.class);
+            filteredMenuList = allMenuCopyList.stream()
                     .filter(e -> e.getLevel()>0)
-                    //获取到的菜单列表直接使用了缓存的对象，修改补充对列表克隆
-                    .map(SerializationUtils::clone)
                     .collect(Collectors.toList());
             LOGGER.info("MenuServiceImpl#getMenuList cloned.");
         } else {

@@ -9,5 +9,5 @@ import org.springframework.stereotype.Component;
 @Data
 public class CacheProperties {
     private boolean ehcacheCloneSwitch;
-    private boolean useNewClone;
+    private String cloneType;
 }

@@ -2,6 +2,7 @@ package com.example.cache.common.ehcache.aspect;
 
 import com.example.cache.common.ehcache.annotation.MyEhCache;
 import com.example.cache.common.property.CacheProperties;
+import com.example.cache.common.utils.KryoUtils;
 import com.fasterxml.jackson.annotation.JsonAutoDetect;
 import com.fasterxml.jackson.annotation.PropertyAccessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -19,9 +20,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.annotation.Order;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StopWatch;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 
 @Aspect
 @Component
@@ -62,29 +66,50 @@ public class MyEhCacheAspect {
         }
 
         Object res;
-        if (cacheProperties.isUseNewClone()) {
-            //新的克隆方式，要求对象及其引用对象对应的类实现Serializable接口
-            try {
-                res = SerializationUtils.clone((Serializable) result);
-                logger.info("MyEhCacheAspect#doAround new cloned.");
-            } catch (Exception e) {
-                logger.error("MyEhCacheAspect#doAround exception", e);
-                return result;
-            }
-        } else {
-            //旧的克隆方式，压测发现存在性能问题
-            String json;
-            try {
-                ObjectMapper objectMapper = new ObjectMapper();
-                objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
-                objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
-                json = objectMapper.writeValueAsString(result);
-                res = objectMapper.readValue(json, Object.class);
-                logger.info("MyEhCacheAspect#doAround old cloned.");
-            } catch (JsonProcessingException e) {
-                logger.error("MyEhCacheAspect#doAround JsonProcessingException", e);
-                return result;
-            }
+        StopWatch stopWatch = new StopWatch("deep-copy");
+        switch (cacheProperties.getCloneType()) {
+            case "json"://Jackson序列化克隆方式，压测发现存在性能问题
+                stopWatch.start("Jackson");
+                String json;
+                try {
+                    ObjectMapper objectMapper = new ObjectMapper();
+                    objectMapper.setVisibility(PropertyAccessor.ALL, JsonAutoDetect.Visibility.ANY);
+                    objectMapper.enableDefaultTyping(ObjectMapper.DefaultTyping.NON_FINAL);
+                    json = objectMapper.writeValueAsString(result);
+                    res = objectMapper.readValue(json, Object.class);
+                    logger.info("MyEhCacheAspect#doAround old cloned.");
+                } catch (JsonProcessingException e) {
+                    logger.error("MyEhCacheAspect#doAround JsonProcessingException", e);
+                    return result;
+                }
+                stopWatch.stop();
+                break;
+            case "binary"://Kryo序列化克隆方式，动态生成字节码方式解决性能问题
+                stopWatch.start("Kryo");
+                Type genericReturnType = method.getGenericReturnType();
+                if (genericReturnType instanceof ParameterizedType) {
+                    ParameterizedType type = (ParameterizedType) genericReturnType;
+                    res = KryoUtils.copy(result, type);
+                } else {
+                    res = KryoUtils.copy(result);
+                }
+                stopWatch.stop();
+                break;
+            case "clone"://Java序列化克隆方式，要求对象及其引用对象对应的类实现Serializable接口
+            default:
+                stopWatch.start("SerializationUtils");
+                try {
+                    res = SerializationUtils.clone((Serializable) result);
+                    logger.info("MyEhCacheAspect#doAround new cloned.");
+                } catch (Exception e) {
+                    logger.error("MyEhCacheAspect#doAround exception", e);
+                    return result;
+                }
+                stopWatch.stop();
+        }
+
+        for (StopWatch.TaskInfo taskInfo : stopWatch.getTaskInfo()) {
+            logger.info("MyEhCacheAspect#doAround " + taskInfo.getTaskName() + " clone consume(ms):" + taskInfo.getTimeMillis());
         }
 
         return res;
