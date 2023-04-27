@@ -24,7 +24,6 @@ import org.springframework.util.StopWatch;
 
 import java.io.Serializable;
 import java.lang.reflect.Method;
-import java.lang.reflect.ParameterizedType;
 import java.lang.reflect.Type;
 
 @Aspect
@@ -86,13 +85,8 @@ public class MyEhCacheAspect {
                 break;
             case "binary"://Kryo序列化克隆方式，动态生成字节码方式解决性能问题
                 stopWatch.start("Kryo");
-                Type genericReturnType = method.getGenericReturnType();
-                if (genericReturnType instanceof ParameterizedType) {
-                    ParameterizedType type = (ParameterizedType) genericReturnType;
-                    res = KryoUtils.copy(result, type);
-                } else {
-                    res = KryoUtils.copy(result);
-                }
+                Type type = method.getGenericReturnType();
+                res = KryoUtils.copy(result, type);
                 stopWatch.stop();
                 break;
             case "clone"://Java序列化克隆方式，要求对象及其引用对象对应的类实现Serializable接口
