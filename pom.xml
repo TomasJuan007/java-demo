@@ -19,6 +19,7 @@
 		<module>jmx-demo</module>
         <module>cache-demo</module>
         <module>location-demo</module>
+		<module>aviator-script-demo</module>
     </modules>
 
 	<properties>

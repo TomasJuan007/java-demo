@@ -1,0 +1,40 @@
+## long
+println("long...");
+let a = 99;
+let b = 0xFF;
+let c = -99;
+println(a + b);
+println(a / b);
+println(a - b + c);
+println(a + b * c);
+println(a - (b - c));
+println(a / b * b + a % b);
+
+## double
+println("double...");
+let a = 1.34159265;
+let b = 0.33333;
+let c = 1e-2;
+println(a + b);
+println(a - b);
+println(a * b);
+println(a / b);
+println(a + c);
+
+## decimal
+println("decimal...");
+let a = 1.34M;
+let b = 0.333M;
+let c = 2e-3M;
+println(a + b);
+println(a - b);
+println(a * b);
+println(a / b);
+println(a + c);
+
+## transform
+println("transform...");
+let a = 1;
+let b = 2;
+println("a/b is " + a/b);
+println("a/double(b) is " + a/double(b));
